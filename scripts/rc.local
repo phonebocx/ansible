@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Default rc.local put in place by Ansible's 'make sysprep'
+
+# This is a one-off that only runs if /etc/machine-id does not
+# exist, or, is zero-sized, and then (does not currently) remove
+# itself.
+
+create_key() {
+        msg="$1"
+        shift
+        file="$1"
+        shift
+	printf %s "$msg"
+	ssh-keygen -q -f "$file" -N '' "$@"
+	echo
+	if command -v restorecon >/dev/null 2>&1; then
+		restorecon "$file" "$file.pub"
+	fi
+	ssh-keygen -l -f "$file.pub"
+}
+
+
+create_keys() {
+        create_key "Creating SSH2 RSA key; this may take some time ..."  /etc/ssh/ssh_host_rsa_key -t rsa
+        create_key "Creating SSH2 DSA key; this may take some time ..." /etc/ssh/ssh_host_dsa_key -t dsa
+        create_key "Creating SSH2 ECDSA key; this may take some time ..." /etc/ssh/ssh_host_ecdsa_key -t ecdsa
+        create_key "Creating SSH2 ED25519 key; this may take some time ..." /etc/ssh/ssh_host_ed25519_key -t ed25519
+}
+
+if [ ! -s /etc/machine-id ]; then
+	systemd-machine-id-setup
+fi
+
+if [ ! -e /etc/ssh/ssh_host_rsa_key ]; then
+	systemctl stop sshd
+	create_keys
+	systemctl start sshd
+fi
+
+#rm -f /etc/rc.local
+

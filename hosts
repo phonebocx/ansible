@@ -1,0 +1,3 @@
+[frontend]
+10.65.11.10 hostname=box-frontend withnode=true
+

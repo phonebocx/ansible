@@ -1,0 +1,10 @@
+---
+- hosts: all
+  strategy: free
+  tasks:
+    - include_role:
+        name: frontend
+      when: "'frontend' in group_names"
+      tags: always
+
+
