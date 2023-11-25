@@ -43,7 +43,7 @@
   copy:
     src: 50-xdebug.ini
     dest: "/etc/php/{{ php_version }}/cli/conf.d/"
-  when: php_version is defined
+  when: php_version is defined and dev is defined
 
 - name: Remove xdebug settings as non-dev environment
   file:
