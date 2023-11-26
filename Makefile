@@ -15,7 +15,7 @@ export ANSIBLE_HOST_KEY_CHECKING
 GITCONFIG=$(HOME)/.gitconfig
 
 .PHONY: setup
-setup: $(BINS) $(GITCONFIG) ansible-collections
+setup: $(BINS) $(GITCONFIG) group_vars/all/cloudflare.yaml ansible-collections
 
 $(BINS):
 	apt-get -y install $(PKGS)
@@ -49,6 +49,14 @@ $(GITCONFIG): defaults/gitconfig
 .PHONY: dev
 dev:
 	ansible-playbook -i localhost, development.yml -e devmachine=true
+
+cloudflare: group_vars/all/cloudflare.yaml
+
+group_vars/all/cloudflare.yaml: config/cloudflare-ipv4 config/cloudflare-ipv6
+	(echo -e "---\ncloudflareips:"; for f in $^; do for ip in $$(cat $$f); do echo "  - \"$$ip\" "; done; done) > $@
+
+config/cloudflare-ipv%:
+	wget -O $@ 'https://www.cloudflare.com/ips-v$*/'
 
 .PHONY: sysprep
 sysprep: /etc/rc.local

@@ -6,6 +6,6 @@
   file:
     owner: www-data
     group: www-data
-    path: /usr/local/phonebocx
+    path: "{{ webroot | default('/var/www/html') }}"
     state: directory
     recurse: true
