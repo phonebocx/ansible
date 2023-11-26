@@ -4,3 +4,9 @@ forcedns=1.1.1.1,8.8.8.8
 [frontend]
 10.65.11.10 hostname=box-frontend withnode=true
 
+[dev:vars]
+forcedns=1.1.1.1,8.8.8.8
+
+[dev]
+10.65.11.11 hostname=box-pubdev withnode=true dev=true
+

@@ -6,5 +6,8 @@
         name: frontend
       when: "'frontend' in group_names"
       tags: always
-
+    - include_role:
+        name: devel
+      when: "'dev' in group_names"
+      tags: always
 

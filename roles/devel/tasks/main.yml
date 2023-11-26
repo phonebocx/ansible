@@ -1,0 +1,45 @@
+---
+# Before we do anything, make sure apache is corect
+- name: Activate apache module {{ item }}
+  apache2_module:
+    state: present
+    name: "{{ item }}"
+  loop:
+    - rewrite
+    - ssl
+  notify: restart-apache
+
+- meta: flush_handlers
+
+- name: Make devel root
+  file:
+    state: directory
+    path: /usr/local/phonebocx
+    owner: www-data
+    group: www-data
+
+- name: Check out repos
+  git:
+    repo: "{{ item.src }}"
+    dest: "/usr/local/phonebocx/{{ item.name }}"
+    accept_hostkey: yes
+  loop: "{{ repos }}"
+  notify:
+    - chown-everything
+
+- name: Delete default site if it exists
+  file:
+    path: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
+  notify: reload-apache
+
+- name: Put devel apache config in place
+  copy:
+    src: "{{ item }}"
+    dest: /etc/apache2/sites-enabled/
+  loop:
+    - 000-devel.conf
+    - 000-devel-ssl.conf
+  notify: restart-apache
+
+
