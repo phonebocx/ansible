@@ -11,4 +11,4 @@ forcedns=1.1.1.1,8.8.8.8
 10.65.11.11 hostname=box-pubdev withnode=true dev=true webroot=/usr/local/phonebocx/core/public
 
 [builder]
-10.66.66.10 hostname=builder forcedns=1.1.1.1,8.8.8.8
+10.66.66.10 hostname=builder forcedns=1.1.1.1,8.8.8.8 dockerdisk=/dev/vdd
