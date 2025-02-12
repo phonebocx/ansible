@@ -3,7 +3,6 @@
   shell: curl -L https://getcomposer.org/installer | /usr/bin/php -- --filename='composer' --install-dir='/usr/bin'
   args:
     creates: /usr/bin/composer
-    warn: no
 
 - name: install other reqs
   package:

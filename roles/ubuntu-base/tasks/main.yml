@@ -102,6 +102,12 @@
     line: export VISUAL=vim
     create: yes
 
+- name: Fix more dumping empty lines
+  lineinfile:
+    path: /etc/bash.bashrc
+    line: alias more='more -e'
+    create: yes
+
 - name: Stop rsyslog from dropping privs
   lineinfile:
     path: /etc/rsyslog.conf

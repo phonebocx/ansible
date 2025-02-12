@@ -10,4 +10,8 @@
         name: devel
       when: "'dev' in group_names"
       tags: always
+    - include_role:
+        name: builder
+      when: "'builder' in group_names"
+      tags: always
 

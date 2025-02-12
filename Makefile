@@ -3,8 +3,8 @@
 SHELL=/bin/bash
 ANSBIN=/usr/bin/ansible-playbook
 # Which roles and collections should be installed? Use dots for roles, slashes for collections
-ANSROLES=gantsign.golang geerlingguy.php-versions jhu-sheridan-libraries.postfix-smarthost geerlingguy.nodejs
-ANSCOLL=vyos/vyos community/general ansible/posix community/docker community/mysql
+ROLES=gantsign.golang geerlingguy.php-versions jhu-sheridan-libraries.postfix-smarthost geerlingguy.nodejs
+COLLECTIONS=vyos/vyos community/general ansible/posix community/docker community/mysql
 
 BINS=$(ANSBIN) /usr/bin/vim /usr/bin/ping /usr/bin/netstat /usr/bin/wget /usr/bin/unzip
 PKGS=ansible vim iputils-ping net-tools wget unzip
@@ -15,7 +15,9 @@ export ANSIBLE_HOST_KEY_CHECKING
 GITCONFIG=$(HOME)/.gitconfig
 
 .PHONY: setup
-setup: $(BINS) $(GITCONFIG) group_vars/all/cloudflare.yaml ansible-collections
+setup: $(BINS) $(GITCONFIG) group_vars/all/cloudflare.yaml ansible-packages
+
+include $(wildcard includes/Makefile.*)
 
 $(BINS):
 	apt-get -y install $(PKGS)
@@ -72,13 +74,3 @@ sysprep: /etc/rc.local
 /etc/rc.local: scripts/rc.local
 	cp $< $@ && chmod 755 $<
 
-ROLEPATHS=$(addsuffix /README.md,$(addprefix ~/.ansible/roles/,$(ANSROLES)))
-COLLPATHS=$(addprefix ~/.ansible/collections/ansible_collections/,$(ANSCOLL))
-.PHONY: ansible-collections
-ansible-collections: $(ANSBIN) $(ROLEPATHS) $(COLLPATHS)
-
-~/.ansible/roles/%/README.md:
-	@ansible-galaxy role install $*
-
-~/.ansible/collections/ansible_collections/%:
-	@ansible-galaxy collection install $(subst /,.,$*)
