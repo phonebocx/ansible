@@ -80,10 +80,13 @@
   when: inventory_hostname is regex('^10') or insecure_docker is defined
 
 - name: Put systemd override in place
-  copy: src=override.conf dest=/etc/systemd/system/docker.service.d/override.conf
+  template: src=override.conf dest=/etc/systemd/system/docker.service.d/override.conf
   notify: systemctl-reload
   tags: systemd
   when: inventory_hostname is regex('^10') or insecure_docker is defined
+
+# Run systemctl reload if we need to, before anything else
+- meta: flush_handlers
 
 - name: Change docker default network to use RFC6598 ranges
   copy:
