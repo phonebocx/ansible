@@ -28,11 +28,9 @@ me: setup /etc/ansible.hostname
 		echo ansible-playbook main.yml -l $$MYIPS; \
 		ansible-playbook main.yml -l $$MYIPS
 
-.PHONY: hostname
-hostname: setup /etc/hosts
-
-/etc/hosts: /etc/ansible.hostname
-	$(ANSBIN) localhost.yml -e hostname=$(shell cat /etc/ansible.hostname)
+.PHONY: base
+base /etc/hosts: /etc/ansible.hostname | setup
+	$(ANSBIN) basesystem.yml -e hostname=$(shell cat /etc/ansible.hostname)
 
 .PHONY: fhostname
 fhostname /etc/ansible.hostname:
