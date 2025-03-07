@@ -1,6 +1,3 @@
-[user]
-        email = xrobau@gmail.com
-        name = Rob Thomas
 
 [safe]
 	directory = *

@@ -224,7 +224,7 @@
   file:
     state: absent
     path: /etc/resolv.conf
-  when: ignoreresolv is not defined and rconf.stat.exists and rconf.stat.islink
+  when: ignoreresolv is not defined and rconf.stat.exists and rconf.stat.islnk
   tags:
     - dns
 
