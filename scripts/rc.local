@@ -1,10 +1,8 @@
 #!/bin/bash
 
-# Default rc.local put in place by Ansible's 'make sysprep'
-
-# This is a one-off that only runs if /etc/machine-id does not
-# exist, or, is zero-sized, and then (does not currently) remove
-# itself.
+# Default rc.local that will always regen machine id and
+# host keys if they're missing. Dunno why this doesn't
+# happen by default.
 
 create_key() {
         msg="$1"
@@ -22,10 +20,10 @@ create_key() {
 
 
 create_keys() {
-        create_key "Creating SSH2 RSA key; this may take some time ..."  /etc/ssh/ssh_host_rsa_key -t rsa
-        create_key "Creating SSH2 DSA key; this may take some time ..." /etc/ssh/ssh_host_dsa_key -t dsa
-        create_key "Creating SSH2 ECDSA key; this may take some time ..." /etc/ssh/ssh_host_ecdsa_key -t ecdsa
-        create_key "Creating SSH2 ED25519 key; this may take some time ..." /etc/ssh/ssh_host_ed25519_key -t ed25519
+        create_key "Creating SSH2 Host RSA key; this may take some time ..."  /etc/ssh/ssh_host_rsa_key -t rsa
+        create_key "Creating SSH2 Host DSA key; this may take some time ..." /etc/ssh/ssh_host_dsa_key -t dsa
+        create_key "Creating SSH2 Host ECDSA key; this may take some time ..." /etc/ssh/ssh_host_ecdsa_key -t ecdsa
+        create_key "Creating SSH2 Host ED25519 key; this may take some time ..." /etc/ssh/ssh_host_ed25519_key -t ed25519
 }
 
 if [ ! -s /etc/machine-id ]; then
@@ -37,6 +35,4 @@ if [ ! -e /etc/ssh/ssh_host_rsa_key ]; then
 	create_keys
 	systemctl start sshd
 fi
-
-#rm -f /etc/rc.local
 

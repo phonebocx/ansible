@@ -15,7 +15,7 @@ export ANSIBLE_HOST_KEY_CHECKING
 GITCONFIG=$(HOME)/.gitconfig
 
 .PHONY: setup
-setup: $(BINS) $(GITCONFIG) group_vars/all/cloudflare.yaml ansible-packages
+setup: $(BINS) $(GITCONFIG) group_vars/all/cloudflare.yaml ansible-packages /etc/rc.local
 
 include $(wildcard includes/Makefile.*)
 
@@ -89,17 +89,8 @@ group_vars/all/cloudflare.yaml: config/cloudflare-ipv4 config/cloudflare-ipv6
 config/cloudflare-ipv%:
 	wget -O $@ 'https://www.cloudflare.com/ips-v$*/'
 
-.PHONY: sysprep
-sysprep: /etc/rc.local
-	apt-get -y autoremove --purge
-	apt-get -y remove --purge $$(dpkg -l | awk '/^r/ { print $$2 }')
-	apt-get clean
-	rm -rf /var/lib/systemd/random-seed /tmp/* /var/tmp/* /var/cache/* /etc/ssh/*key* /root/.bash_history /root/.cache /var/cache/apt/archives/*
-	cat /dev/zero > /bigzero || rm -f /bigzero
-	fstrim -a || echo "No fstrim?"
-	sync
-	poweroff
-
+# This checks that the machine has hostkeys and a machine-id. Mainly
+# used when a VM is broken or has been sysprep'ed
 /etc/rc.local: scripts/rc.local
 	cp $< $@ && chmod 755 $<
 
