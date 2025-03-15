@@ -76,14 +76,10 @@
 
 - name: Make sure docker override exists
   file: path=/etc/systemd/system/docker.service.d state=directory
-  tags: systemd
-  when: inventory_hostname is regex('^10') or insecure_docker is defined
 
-- name: Put systemd override in place
+- name: Put systemd override in place to allow local binds if in 10.0.0.0/8
   template: src=override.conf dest=/etc/systemd/system/docker.service.d/override.conf
   notify: systemctl-reload
-  tags: systemd
-  when: inventory_hostname is regex('^10') or insecure_docker is defined
 
 # Run systemctl reload if we need to, before anything else
 - meta: flush_handlers
