@@ -1,15 +1,32 @@
 ---
-- name: Make override directory
+- name: Make autologin override directory
   file:
     state: directory
     path: /etc/systemd/system/getty@tty1.service.d
     owner: root
     group: root
+  when: ansible_virtualization_type != "lxc"
 
-- name: Put override in place
+- name: Put autolgin override in place
   copy:
     src: override.conf
     dest: /etc/systemd/system/getty@tty1.service.d/
   notify: systemctl-reload
+  when: ansible_virtualization_type != "lxc"
+
+- name: Make container override directory
+  file:
+    state: directory
+    path: /etc/systemd/system/container-getty@1.service.d
+    owner: root
+    group: root
+  when: ansible_virtualization_type == "lxc"
+
+- name: Put container autolgin override in place
+  copy:
+    src: container-override.conf
+    dest: /etc/systemd/system/container-getty@1.service.d/override.conf
+  notify: systemctl-reload
+  when: ansible_virtualization_type == "lxc"
 
 
